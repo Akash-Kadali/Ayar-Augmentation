@@ -307,7 +307,7 @@ class AugmentPipe(torch.nn.Module):
             )
             
             # Sample the input image using the grid with gradient-safe grid_sample.
-            images = grid_sample_gradfix.grid_sample(images, grid)
+            images = grid_sample_gradfix.grid_sample(images, grid, align_corners=True)
 
 
             # Downsample and crop.
