@@ -1,22 +1,25 @@
 # grid_sample_gradfix.py
 
-import warnings
 import torch
+import warnings
 
-# Enable the custom op by setting this to True
-enabled = True
+# Disable the custom op by default for PyTorch 2.6+
+enabled = False
 
 #----------------------------------------------------------------------------
 
-def grid_sample(input, grid):
+def grid_sample(input, grid, mode='bilinear', padding_mode='zeros', align_corners=True):
+    # If enabled and supported, use custom implementation (only for PyTorch 1.7–1.9)
     if _should_use_custom_op():
         return _GridSample2dForward.apply(input, grid)
+    
+    # Fallback to standard PyTorch function with backward support
     return torch.nn.functional.grid_sample(
         input=input,
         grid=grid,
-        mode='bilinear',             # MUST be bilinear for backward compatibility
-        padding_mode='zeros',
-        align_corners=False
+        mode=mode,
+        padding_mode=padding_mode,
+        align_corners=align_corners
     )
 
 #----------------------------------------------------------------------------
@@ -34,6 +37,7 @@ def _should_use_custom_op():
 
 #----------------------------------------------------------------------------
 
+# Optional legacy custom implementation (unused for PyTorch ≥2.0)
 class _GridSample2dForward(torch.autograd.Function):
     @staticmethod
     def forward(ctx, input, grid):
@@ -44,7 +48,7 @@ class _GridSample2dForward(torch.autograd.Function):
             grid=grid,
             mode='bilinear',
             padding_mode='zeros',
-            align_corners=False
+            align_corners=True
         )
         ctx.save_for_backward(input, grid)
         return output
@@ -52,31 +56,8 @@ class _GridSample2dForward(torch.autograd.Function):
     @staticmethod
     def backward(ctx, grad_output):
         input, grid = ctx.saved_tensors
-        grad_input, grad_grid = _GridSample2dBackward.apply(grad_output, input, grid)
+        grad_input = torch.autograd.grad(outputs=output, inputs=input, grad_outputs=grad_output, retain_graph=True)[0]
+        grad_grid = None  # Let PyTorch autograd handle it (or skip)
         return grad_input, grad_grid
-
-#----------------------------------------------------------------------------
-
-class _GridSample2dBackward(torch.autograd.Function):
-    @staticmethod
-    def forward(ctx, grad_output, input, grid):
-        op = torch._C._jit_get_operation('aten::grid_sampler_2d_backward')
-        grad_input, grad_grid = op(grad_output, input, grid, 0, 0, False)  # 0=bilinear, 0=zeros
-        ctx.save_for_backward(grid)
-        return grad_input, grad_grid
-
-    @staticmethod
-    def backward(ctx, grad2_grad_input, grad2_grad_grid):
-        _ = grad2_grad_grid  # unused
-        grid, = ctx.saved_tensors
-        grad2_grad_output = None
-        grad2_input = None
-        grad2_grid = None
-
-        if ctx.needs_input_grad[0]:
-            grad2_grad_output = _GridSample2dForward.apply(grad2_grad_input, grid)
-
-        assert not ctx.needs_input_grad[2]
-        return grad2_grad_output, grad2_input, grad2_grid
 
 #----------------------------------------------------------------------------
