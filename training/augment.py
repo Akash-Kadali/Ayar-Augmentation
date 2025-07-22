@@ -283,11 +283,32 @@ class AugmentPipe(torch.nn.Module):
             G_inv = scale2d(2, 2, device=device) @ G_inv @ scale2d_inv(2, 2, device=device)
             G_inv = translate2d(-0.5, -0.5, device=device) @ G_inv @ translate2d_inv(-0.5, -0.5, device=device)
 
-            # Execute transformation.
-            shape = [batch_size, num_channels, (height + Hz_pad * 2) * 2, (width + Hz_pad * 2) * 2]
-            G_inv = scale2d(2 / images.shape[3], 2 / images.shape[2], device=device) @ G_inv @ scale2d_inv(2 / shape[3], 2 / shape[2], device=device)
-            grid = torch.nn.functional.affine_grid(theta=G_inv[:,:2,:], size=shape, align_corners=False)
+           # Execute transformation.
+            # Calculate the shape of the output image after padding and 2x scaling.
+            shape = [
+                images.shape[0],                          # batch_size
+                images.shape[1],                          # num_channels
+                (images.shape[2] + Hz_pad * 2) * 2,       # new height
+                (images.shape[3] + Hz_pad * 2) * 2        # new width
+            ]
+            
+            # Apply inverse scaling to the grid transformation matrix (G_inv).
+            G_inv = (
+                scale2d(2 / images.shape[3], 2 / images.shape[2], device=device) @
+                G_inv @
+                scale2d_inv(2 / shape[3], 2 / shape[2], device=device)
+            )
+            
+            # Generate the affine grid for sampling.
+            grid = torch.nn.functional.affine_grid(
+                theta=G_inv[:, :2, :],
+                size=torch.Size(shape),
+                align_corners=False
+            )
+            
+            # Sample the input image using the grid with gradient-safe grid_sample.
             images = grid_sample_gradfix.grid_sample(images, grid)
+
 
             # Downsample and crop.
             images = upfirdn2d.downsample2d(x=images, f=self.Hz_geom, down=2, padding=-Hz_pad*2, flip_filter=True)
