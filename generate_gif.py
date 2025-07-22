@@ -1,5 +1,3 @@
-"""Generate GIF using pretrained network pickle."""
-
 import os
 
 import click
