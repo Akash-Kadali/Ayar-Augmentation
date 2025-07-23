@@ -21,6 +21,12 @@ from training import training_loop
 from metrics import metric_main
 from torch_utils import training_stats
 from torch_utils import custom_ops
+import warnings
+warnings.filterwarnings("ignore")
+
+# 🩹 Patch to support grid_sample backward
+import torch_utils.ops.grid_sample_gradfix
+torch_utils.ops.grid_sample_gradfix.enabled = True
 
 #----------------------------------------------------------------------------
 
