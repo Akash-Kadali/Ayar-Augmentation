@@ -1,3 +1,11 @@
+﻿# Copyright (c) 2021, NVIDIA CORPORATION.  All rights reserved.
+#
+# NVIDIA CORPORATION and its licensors retain all intellectual property
+# and proprietary rights in and to this software, related documentation
+# and any modifications thereto.  Any use, reproduction, disclosure or
+# distribution of this software and related documentation without an express
+# license agreement from NVIDIA CORPORATION is strictly prohibited.
+
 import numpy as np
 import torch
 from torch_utils import misc
@@ -707,8 +715,6 @@ class DiscriminatorBlock(torch.nn.Module):
 
         # FromRGB.
         if self.in_channels == 0 or self.architecture == 'skip':
-            if img.ndim == 3:
-                img = img.unsqueeze(0)
             misc.assert_shape(img, [None, self.img_channels if self.block_type == 'rgb' else 1, self.resolution, self.resolution])
             img = img.to(dtype=dtype, memory_format=memory_format)
             y = self.fromrgb(img)

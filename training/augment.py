@@ -1,4 +1,4 @@
-# Copyright (c) 2021, NVIDIA CORPORATION.  All rights reserved.
+﻿# Copyright (c) 2021, NVIDIA CORPORATION.  All rights reserved.
 #
 # NVIDIA CORPORATION and its licensors retain all intellectual property
 # and proprietary rights in and to this software, related documentation
@@ -355,11 +355,7 @@ class AugmentPipe(torch.nn.Module):
 
         # Execute if the transform is not identity.
         if C is not I_4:
-            if images.ndim == 3:
-                images = images.unsqueeze(0)  # Ensure 4D shape: [B, C, H, W]
-            batch_size, num_channels, height, width = images.shape
-
-            images = images.view(images.size(0), images.size(1), -1)
+            images = images.reshape([batch_size, num_channels, height * width])
             if num_channels == 3:
                 images = C[:, :3, :3] @ images + C[:, :3, 3:]
             elif num_channels == 1:
@@ -367,10 +363,7 @@ class AugmentPipe(torch.nn.Module):
                 images = images * C[:, :, :3].sum(dim=2, keepdims=True) + C[:, :, 3:]
             else:
                 raise ValueError('Image must be RGB (3 channels) or L (1 channel)')
-            if images.ndim == 3:
-                images = images.unsqueeze(0)  # Ensure 4D shape: [B, C, H, W]
-            batch_size, num_channels, height, width = images.shape
-            images = images.view(images.size(0), images.size(1), -1)
+            images = images.reshape([batch_size, num_channels, height, width])
 
         # ----------------------
         # Image-space filtering.
@@ -400,19 +393,11 @@ class AugmentPipe(torch.nn.Module):
 
             # Apply filter.
             p = self.Hz_fbank.shape[1] // 2
-            if images.ndim == 3:
-                images = images.unsqueeze(0)  # Ensure 4D shape: [B, C, H, W]
-            batch_size, num_channels, height, width = images.shape
-            images = images.view(images.size(0), images.size(1), -1)
-
+            images = images.reshape([1, batch_size * num_channels, height, width])
             images = torch.nn.functional.pad(input=images, pad=[p,p,p,p], mode='reflect')
             images = conv2d_gradfix.conv2d(input=images, weight=Hz_prime.unsqueeze(2), groups=batch_size*num_channels)
             images = conv2d_gradfix.conv2d(input=images, weight=Hz_prime.unsqueeze(3), groups=batch_size*num_channels)
-            if images.ndim == 3:
-                images = images.unsqueeze(0)  # Ensure 4D shape: [B, C, H, W]
-            batch_size, num_channels, height, width = images.shape
-
-            images = images.view(images.size(0), images.size(1), -1)
+            images = images.reshape([batch_size, num_channels, height, width])
 
         # ------------------------
         # Image-space corruptions.
