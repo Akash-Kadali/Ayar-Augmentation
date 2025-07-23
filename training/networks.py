@@ -707,6 +707,8 @@ class DiscriminatorBlock(torch.nn.Module):
 
         # FromRGB.
         if self.in_channels == 0 or self.architecture == 'skip':
+            if img.ndim == 3:
+                img = img.unsqueeze(0)
             misc.assert_shape(img, [None, self.img_channels if self.block_type == 'rgb' else 1, self.resolution, self.resolution])
             img = img.to(dtype=dtype, memory_format=memory_format)
             y = self.fromrgb(img)
