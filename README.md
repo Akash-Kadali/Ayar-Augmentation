@@ -1,148 +1,137 @@
 <div align="center">
-<h1>Dual-Interrelated Diffusion Model for Few-Shot Anomaly Image Generation(CVPR2025)</h1>
+<h1>🚀 Customized Dual-Interrelated Diffusion Model for Semiconductor Defect Augmentation</h1>
+<h3>Powered by Ayar Labs | Based on CVPR 2025 Paper</h3>
 <br>
-  
+
 <p>
-<a>Ying Jin</a>, <a href="https://scholar.google.com/citations?user=i5I-cIEAAAAJ&hl=zh-CN&oi=sra">Jinlong Peng<sup>2#</sup></a>,
-<a href="https://scholar.google.com/citations?user=gUJWww0AAAAJ&hl=zh-CN&oi=sra">Qingdong He<sup>2#</sup></a>,
-<a href="https://scholar.google.com/citations?user=Jm5qsAYAAAAJ&hl=zh-CN&oi=sra">Teng Hu<sup>3</sup></a>,
-<a>Hao Chen<sup>1</sup></a>,
-<a>Haoxuan Wang<sup>1</sup></a>,
-  
-<a href="https://scholar.google.com/citations?user=tiQ_rv0AAAAJ&hl=zh-CN&oi=sra">Jiafu Wu<sup>2</sup></a>,
-  <a>wenbing zhu<sup>1</sup></a>,
-  <a>Mingmin Chi<sup>1*</sup></a>,
-  <a>Jun Liu<sup>2</sup></a>,
-  <a>Yabiao Wang<sup>2,4</sup></a>
-  
-<!-- [<sup>Ying Jin <sup>1#</sup>](), -->
-<!-- [Jinlong Peng<sup>2#</sup>](https://scholar.google.com/citations?user=i5I-cIEAAAAJ&hl=zh-CN&oi=sra), -->
-<!-- [Qingdong He<sup>2#</sup>](https://scholar.google.com/citations?user=gUJWww0AAAAJ&hl=zh-CN&oi=sra), -->
-<!-- [Teng Hu<sup>3</sup>](https://scholar.google.com/citations?user=Jm5qsAYAAAAJ&hl=zh-CN&oi=sra), -->
-<!-- [Hao Chen<sup>1</sup>](), -->
-<!-- [Haoxuan Wang<sup>1</sup>](),  -->
-<!-- [Jiafu Wu<sup>2</sup>](https://scholar.google.com/citations?user=tiQ_rv0AAAAJ&hl=zh-CN&oi=sra), -->
-<!--  [wenbing zhu<sup>1</sup>](),
-[Mingmin Chi<sup>1*</sup>](https://scholar.google.com/citations?user=Y8b1W00AAAAJ&hl=zh-CN&oi=sra),
-[Jun Liu<sup>2</sup>](),
-[Yabiao Wang<sup>2,4</sup>]() -->
-
-(#Equal contribution,*Corresponding author)
-
-<sup>1</sup>Fudan University, <sup>2</sup>Youtu Lab, Tencent, <sup>3</sup>Shanghai Jiao Tong University, <sup>4</sup>Zhe Jiang University
+Adapted and optimized by <strong>Sri Akash Kadali</strong> during my internship at <strong>Ayar Labs</strong>, this project is a customized implementation of the CVPR 2025 work <em>"DualAnoDiff: Dual-Interrelated Diffusion Model for Few-Shot Anomaly Image Generation"</em>. This version is restructured specifically for semiconductor die defect augmentation across Critical, Laser, and Body regions.
 </p>
 
+<a href="https://arxiv.org/abs/2408.13509"><img src="https://img.shields.io/badge/arXiv-2408.13509-A42C25.svg" alt="arXiv"></a>
 
-<a href="https://arxiv.org/abs/2408.13509"><img src="https://img.shields.io/badge/arXiv-2503.09277-A42C25.svg" alt="arXiv"></a>
 </div>
 
-## Abstract
-The performance of anomaly inspection in industrial manufacturing is constrained by the scarcity of anomaly data. To overcome this challenge, researchers have started employing anomaly generation approaches to augment the anomaly dataset.
-However, existing anomaly generation methods suffer from limited diversity in the generated anomalies and struggle to achieve a seamless blending of this anomaly with the original image. Moreover, the generated mask is usually not aligned with the generated anomaly. In this paper, we overcome these challenges from a new perspective, simultaneously generating a pair of the overall image and the corresponding anomaly part.
-We propose **DualAnoDiff**, a novel diffusion-based few-shot anomaly image generation model, which can generate diverse and realistic anomaly images by using a dual-interrelated diffusion model, where one of them is employed to generate the whole image while the other one generates the anomaly part.
-Moreover, we extract background and shape information to mitigate the distortion and blurriness phenomenon in few-shot image generation. 
-Extensive experiments demonstrate the superiority of our proposed model over state-of-the-art methods in terms of diversity, realism and the accuracy of mask. Overall, our approach significantly improves the performance of downstream anomaly inspection tasks, including anomaly detection, anomaly localization, and anomaly classification tasks. Code will be made available.
+---
 
-# ✨Overview
-<img width="720" alt="image" src="https://github.com/user-attachments/assets/27bd1be9-726a-4257-a160-5816317e1d43" />
+## 🧠 Abstract
 
+Anomaly inspection in semiconductor manufacturing suffers due to extremely scarce labeled defect images. We solve this using **DualAnoDiff**, a powerful diffusion-based model that generates highly realistic and diverse synthetic defects.
 
-# Getting Started
-Download [stable-diffusion-v1-5](https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5).
-```
-git clone https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5
-```
-Environment Setup and Run.
-```
-pip -r requirments.txt
-cd dual-interrelated_diff # or bcm-dual-interrelated_diff
-sh run_mvtec_split.py
-# run_mvtec_split.py includes operations for training, inference, and mask generation. Since our method involves training the model for a single category, it is necessary to modify the name in the run_mvtec_split.py file, which represents the category to be generated from Mvtec.
-```
-To see the usage and instructions for U2-Net, please refer to: [U-2-Net](https://github.com/xuebinqin/U-2-Net)
+Unlike traditional GANs, DualAnoDiff leverages two interrelated diffusion paths: one generates the full image while the other generates only the defect region, improving spatial consistency and realism.
 
-# Detail steps
-0. Environment:
+In this customized implementation:
+
+* We use real semiconductor chip images from Ayar Labs.
+* Perform region-specific augmentation (e.g., Critical area only).
+* Integrate outputs into downstream defect classification pipelines.
+
+---
+
+## 🧰 My Customizations at Ayar Labs
+
+* ✅ Region-specific training on <code>Critical</code>, <code>Laser</code>, and <code>Body</code>
+* ✅ Patched all path variables and configs for `/notebooks/my_mvtec/LaserDefect`
+* ✅ Integrated Hugging Face's <code>runwayml/stable-diffusion-v1-5</code>
+* ✅ Enabled <code>accelerate</code> GPU launch with precision & memory flags
+* ✅ Used mixed precision and torch GPU configs to reduce OOM
+* ✅ Future scope: Integrate synthetic defects into YOLO defect detector for performance benchmarking
+
+---
+
+## 🔧 Installation & Setup
+
+```bash
+# Step 1: Clone & Get SD weights
+git clone https://github.com/yinyjin/DualAnoDiff.git
+cd DualAnoDiff/dual-interrelated_diff
+
+# Download stable diffusion weights
+git clone https://huggingface.co/stable-diffusion-v1-5 stable-diffusion-v1-5
+
+# Step 2: Install dependencies
+pip install -r requirements.txt
+```
+
+---
+
+## 📁 Folder Structure (Custom)
+
+```
+/notebooks/my_mvtec/LaserDefect/
+├── train/good/
+├── test/good/
+└── test/bad/           # 489 manually collected defect images
+```
+
+---
+
+## 🚀 Training (GPU Accelerated)
+
+```bash
+cd dual-interrelated_diff
+bash train.sh
+```
+
+✅ Model uses `accelerate launch` with CUDA\_VISIBLE\_DEVICES=0.
+✅ Output images will be saved in `all_generate/LaserDefect/bad`.
+
+---
+
+## 🔍 Inference
+
+```bash
+python inference_mvtec_split.py LaserDefect bad
+```
+
+* Adjust <code>guidance\_scale</code> and <code>inference\_steps</code> for diversity
+* Generated images will be saved in `all_generate` folders
+
+---
+
+## 🎯 Use Cases in Ayar Labs Pipeline
+
+* ➕ Augment rare classes like Laser or Facet Damage
+* ➕ Balance training datasets via synthetic image generation
+* ➕ Future: Use DFMGAN-style mask editing or Poisson blending
+
+---
+
+## 📊 Environment Setup (Locked Versions)
+
 ```
 accelerate==0.24.1
-clip
-Cython==0.29.35
-matplotlib==3.8.0
-numpy==1.24.3
-open-clip-torch==2.23.0
-opencv-python==4.7.0.72
-opencv-python-headless==.7.0.72
-pandas==2.0.3
-Pillow==9.4.0
-pytorch-lightning==1.5.0
-PyYAML==6.0
-scikit-image==0.22.0
-scikit-learn==1.3.2
-scipy==1.10.1
-setuptools==65.6.3
-tensorboard==.15.0
-timm==0.4.12
-torch==2.0.1+cu118
-torchaudio==2.0.2+cu118
-torchmetrics==0.6.0
-torchvision==0.15.2+cu118
+protobuf==3.20.3
+clip, einops, timm, torch==2.0.1+cu118
 transformers==4.30.2
+torchvision==0.15.2+cu118
+scikit-image, matplotlib, pandas, Pillow
 ```
-1. Download [stable-diffusion-v1-5](https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5).
-```
-git clone https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5
-```
-2. Train
 
-After running, the model weights will be saved in "all_generate". For different amounts of training data, you can choose the most appropriate steps by visualizing the generated results. 
-```
-cd dual-interrelated_diff
-sh train.sh
-```
-3. Infer
-   
-You can modify the "guidance_scale" to observe the generated results that are closer in color to the training data.
-```
-python inference_mvtec_split.py hazelnut hole
-```
-4. Get Mask
-   
-Referencing [U-2-Net](https://github.com/xuebinqin/U-2-Net), use this model to segment the generated fg files.
+---
 
-# Data and checkpoints
+## 🧪 Sample Results
 
-|          |       url      |
-|----------|----------|
-| Checkpoints for anomaly generation | [url](https://pan.quark.cn/s/19f5cbefc100)    |
-| Checkpoints for anomaly generation with BCM | [url](https://pan.quark.cn/s/7ea8f1f13b11)     | 
-| 1-shot generate images | [url](https://pan.quark.cn/s/51d266cedef6)    | 
+<img width="700" src="https://github.com/user-attachments/assets/7128b95d-3a35-4838-ad88-c2150afdee2d" />
 
+---
 
+## 🥇 GAN vs Diffusion: Why Diffusion Wins
 
-# Result
-![image](https://github.com/user-attachments/assets/7128b95d-3a35-4838-ad88-c2150afdee2d)
+| Feature                       | GAN (e.g., DFMGAN) | DualAnoDiff (Diffusion) |
+| ----------------------------- | ------------------ | ----------------------- |
+| Realism of Defects            | ❌ Artifacts        | ✅ High Fidelity         |
+| Diversity of Generated Images | ❌ Limited Variety  | ✅ Very Diverse          |
+| Mask Alignment                | ❌ Often Misaligned | ✅ Mask is Co-generated  |
+| Easy to Train                 | ✅ Fast             | ❌ Slower but Stable     |
+| Few-shot Performance          | ❌ Poor             | ✅ Excellent             |
 
-## Comparison in Anomaly Generation
-### Anomaly Generation Quality
-![image](https://github.com/user-attachments/assets/196d6147-f010-4c69-a5d5-89df94a80bb6)
-### Anomaly Generation for Anomaly Detection and Localization
-![image](https://github.com/user-attachments/assets/18e29fe2-b613-4fc2-98e3-1a5f2860b8a1)
+✅ In our case (semiconductor defect gen), **diffusion methods are clearly superior**, especially when defect variety and visual fidelity are crucial.
 
-## Comparison with Anomaly Detection Models
-![image](https://github.com/user-attachments/assets/f793f984-e746-4d2d-bc1b-8d50144a0eb2)
+---
 
+## 📌 Citation
 
-<!--
-## More experiments
-To validate the few-shot performance of the model, we tested the 1-shot performance on selected categories. The visualization results are as follows:
-
-<img width="360" alt="image" src="https://github.com/user-attachments/assets/b2e8bfdc-df9d-4ab3-9f5f-a83666941fa1" />
-
--->
-
-
-# Citation
-```
+```bibtex
 @article{jin2024dualanodiff,
   title={DualAnoDiff: Dual-Interrelated Diffusion Model for Few-Shot Anomaly Image Generation},
   author={Jin, Ying and Peng, Jinlong and He, Qingdong and Hu, Teng and Chen, Hao and Wu, Jiafu and Zhu, Wenbing and Chi, Mingmin and Liu, Jun and Wang, Yabiao and others},
@@ -151,4 +140,8 @@ To validate the few-shot performance of the model, we tested the 1-shot performa
 }
 ```
 
+---
 
+<div align="center">
+  <b>Made with ❤️ and A100s at Ayar Labs</b>
+</div>
